@@ -1,6 +1,7 @@
 // Vanilla Javascript
 
-//Reducer todo function
+// Fourth. (Update the state)
+
 function todos (state = [], action) {
   if (action.type === 'ADD_TODO') {
     return state.concat([action.todo])
@@ -8,20 +9,12 @@ function todos (state = [], action) {
   return state
 }
 
-//About the function avobe we need to keep in mind
-//the first time that this function is invoked (state)
-//is going to be undefined. So we use state=[] as a default parameter
-// to indicate if the state is undefined set it to an empty array
-//and then if it is an array we can call dot concat later
-
-
 function createStore () {
   //The store should have four parts:
   // 1. The State
   // 2. Get the state
   // 3. Listen to changes on the state
   // 4. Update the state
-
 
 //First (the State)
   let state
@@ -31,10 +24,6 @@ function createStore () {
 //Second (Get State)
   const getState = () => state
 
-  /**
-   * We need to provide a unsubscribe method too
-   */
-
   const subscribe = (listener) => {
     listeners.push(listener)
     //Unsubscribe
@@ -43,8 +32,17 @@ function createStore () {
     }
   }
 
+  //Fourth (Update the state)
+  // Dispatch is responsible for updating the state
+  //inside of our actual store
+  const dispatch = (action) => {
+    state = todos(state, action)
+    listeners.forEach((listener) => listener())
+  }
+
   return {
     getState,
-    subscribe
+    subscribe,
+    dispatch
   }
 }
