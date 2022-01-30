@@ -16,9 +16,16 @@ function createStore () {
 //Second (Get State)
   const getState = () => state
 
+  /**
+   * We need to provide a unsubscribe method too
+   */
 
   const subscribe = (listener) => {
     listeners.push(listener)
+    //Unsubscribe
+    return () => {
+      listeners = listeners.filter((l) => l !== listener)
+    }
   }
 
   return {
@@ -34,6 +41,12 @@ store.subscribe(() => {
   console.log('The new State is: ', store.getState())
 })
 
-store.subscribe(() => {
+/* store.subscribe(() => {
+  console.log('The Store changed')
+}) */
+
+const unsubscribe = store.subscribe(() => {
   console.log('The Store changed')
 })
+
+unsubscribe()
