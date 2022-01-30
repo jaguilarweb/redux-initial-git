@@ -17,14 +17,28 @@ function createStore () {
   return {
     getState
   }
-
 }
-/* Currently, this factory function:
-- takes in no arguments
-- sets up a local (private) variable to hold the state
-- sets up a getState() function
-- returns an object that publicly exposes the getState() function */
+
+//Third (Listen to changes on the state)
+
+//In order to invoke createStore and get back store.
+const store = createStore()
+
+// Now we just have a getState method
+// but in the future we would want something like:
 
 
+//It is needed create inside of createStore a way
+// to soport this functionality
+store.subscribe(() => {
+  //So whenever the state changes internally
+  //We can invoke this callback fn and can do anything we want
+  console.log('The new State is: ', store.getState())
+})
 
+//And likely we might want to subscribe
+//more than one time
 
+store.subscribe(() => {
+  console.log('The Store changed')
+})
