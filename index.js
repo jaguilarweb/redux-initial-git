@@ -10,34 +10,29 @@ function createStore () {
 
 //First (the State)
   let state
+// Third (Listen to changes)
+  let listeners = []
 
 //Second (Get State)
   const getState = () => state
 
+
+  const subscribe = (listener) => {
+    listeners.push(listener)
+  }
+
   return {
-    getState
+    getState,
+    subscribe
   }
 }
 
 //Third (Listen to changes on the state)
-
-//In order to invoke createStore and get back store.
 const store = createStore()
 
-// Now we just have a getState method
-// but in the future we would want something like:
-
-
-//It is needed create inside of createStore a way
-// to soport this functionality
 store.subscribe(() => {
-  //So whenever the state changes internally
-  //We can invoke this callback fn and can do anything we want
   console.log('The new State is: ', store.getState())
 })
-
-//And likely we might want to subscribe
-//more than one time
 
 store.subscribe(() => {
   console.log('The Store changed')
