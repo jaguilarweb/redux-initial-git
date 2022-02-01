@@ -38,3 +38,35 @@ function todos (state = [], action) {
   }
   return state
 }
+
+const store = createStore(todos)
+
+store.subscribe(()=>{
+  console.log('The new state is: ', store.getState() )
+})
+
+store.dispatch({
+  type: 'ADD_TODO',
+  todo: {
+    id: 0,
+    name: 'Learn Redux',
+    complete: false
+  }
+})
+//We could add all dispatch that we need
+// store.dispatch({
+//   type: 'ADD_TODO',
+//   todo: {
+//     id: 1,
+//     name: 'Read a book',
+//     complete: true
+//   }
+// })
+
+//You will see (browser console):
+//The new state is:  
+// (2) [{…}, {…}]
+// 0: {id: 0, name: 'Learn Redux', complete: false}
+// 1: {id: 1, name: 'Read a book', complete: true}
+// length: 2
+// [[Prototype]]: Array(0)
