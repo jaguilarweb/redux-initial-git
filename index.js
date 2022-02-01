@@ -46,7 +46,32 @@ function todos (state = [], action) {
   }
 }
 
-const store = createStore(todos)
+function goals (state = [], action) {
+  switch(action.type){
+    case  'ADD_GOAL' :
+      return state.concat([action.goal])
+    case 'REMOVE_GOAL' :
+      return state.filter((goal) => goal.id !== action.id)      
+    default :
+      return state
+  }
+}
+
+//How createStore(todos) only handle a single reducer function
+//we need to create a new reducer, a root reducer that will include 
+//all news reducer functions that we need. (Ex todos as well goals)
+// const store = createStore(todos)
+
+//app reducer will be our root reducer
+function app (state = {}, action){
+  return{
+    todos: todos(state.todos, action),
+    goals: goals(state.goal, action),
+  }
+}
+
+//And we pass app instead of todo
+const store = createStore(app)
 
 store.subscribe(()=>{
   console.log('The new state is: ', store.getState() )
@@ -77,3 +102,11 @@ store.dispatch({
 // 1: {id: 1, name: 'Read a book', complete: true}
 // length: 2
 // [[Prototype]]: Array(0)
+
+store.dispatch({
+  type: 'ADD_GOAL',
+  goal: {
+    id: 0,
+    name: 'Learn More'
+  }
+})
