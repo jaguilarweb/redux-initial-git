@@ -94,6 +94,24 @@
     }
   }
 
+  //Verification code before the reducer run
+  function checkAndDispatch (store, action) {
+    if (
+      action.type === ADD_TODO &&
+      action.todo.name.toLowerCase().includes('bitcoin')
+    ){
+      return alert("Nop. That's a bad idea.")
+    }
+    if (
+      action.type === ADD_GOAL &&
+      action.goal.name.toLowerCase().includes('bitcoin')
+    ){
+      return alert("Nop. That's a bad idea.")
+    }
+
+    store.dispatch(action)
+  }
+
   const store = Redux.createStore(Redux.combineReducers({
     todos,
     goals,
@@ -109,39 +127,6 @@
     todos.forEach(addTodoToDOM)
   })
 
-    // store.dispatch(addTodoAction({
-    //   id: 0,
-    //   name: 'Walk the dog',
-    //   complete: false,
-    // }))
-
-    // store.dispatch(addTodoAction({
-    //   id: 1,
-    //   name: 'Wash the car',
-    //   complete: false,
-    // }))
-
-    // store.dispatch(addTodoAction({
-    //   id: 2,
-    //   name: 'Go to the gym',
-    //   complete: true,
-    // }))
-
-    // store.dispatch(removeTodoAction(1))
-
-    // store.dispatch(toggleTodoAction(0))
-
-    // store.dispatch(addGoalAction({
-    //   id: 0,
-    //   name: 'Learn Redux'
-    // }))
-
-    // store.dispatch(addGoalAction({
-    //   id: 1,
-    //   name: 'Lose 20 pounds'
-    // }))
-
-    // store.dispatch(removeGoalAction(0))
 
     // DOM code
     function addTodo () {
@@ -149,7 +134,7 @@
       const name = input.value
       input.value = ''
 
-      store.dispatch(addTodoAction({
+      checkAndDispatch(store, addTodoAction({
         name,
         complete: false,
         id: generateId()
@@ -161,7 +146,7 @@
       const name = input.value
       input.value = ''
 
-      store.dispatch(addGoalAction({
+      checkAndDispatch(store, addGoalAction({
         id: generateId(),
         name
       }))
@@ -185,14 +170,14 @@
       const text = document.createTextNode(todo.name)
       
       const removeBtn = createRemoveButton(() => {
-        store.dispatch(removeTodoAction(todo.id))
+        checkAndDispatch(store, removeTodoAction(todo.id))
       })
 
       node.appendChild(text)
       node.appendChild(removeBtn)
       node.style.textDecoration = todo.complete ? 'line-through' : 'none'
       node.addEventListener('click', () => {
-        store.dispatch(toggleTodoAction(todo.id))
+        checkAndDispatch(store, toggleTodoAction(todo.id))
       })
 
       document.getElementById('todos')
@@ -203,7 +188,7 @@
       const node = document.createElement('li')
       const text = document.createTextNode(goal.name)
       const removeBtn = createRemoveButton(() => {
-        store.dispatch(removeGoalAction(goal.id))
+        checkAndDispatch(store, removeGoalAction(goal.id))
       })
 
       node.appendChild(text)
