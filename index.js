@@ -1,40 +1,23 @@
 // Vanilla Javascript
 
-// Fourth. (Update the state)
-
-function todos (state = [], action) {
-  if (action.type === 'ADD_TODO') {
-    return state.concat([action.todo])
-  }
-  return state
-}
-
+//Library Code
 function createStore () {
-  //The store should have four parts:
-  // 1. The State
-  // 2. Get the state
-  // 3. Listen to changes on the state
-  // 4. Update the state
-
-//First (the State)
   let state
-// Third (Listen to changes)
   let listeners = []
 
-//Second (Get State)
+  //Gets the current state
   const getState = () => state
 
+  //Takes in functions that will be called
+  //when the state changes
   const subscribe = (listener) => {
     listeners.push(listener)
-    //Unsubscribe
     return () => {
       listeners = listeners.filter((l) => l !== listener)
     }
   }
 
-  //Fourth (Update the state)
-  // Dispatch is responsible for updating the state
-  //inside of our actual store
+  //Modifies the state
   const dispatch = (action) => {
     state = todos(state, action)
     listeners.forEach((listener) => listener())
@@ -46,3 +29,28 @@ function createStore () {
     dispatch
   }
 }
+
+
+//App Code
+function todos (state = [], action) {
+  if (action.type === 'ADD_TODO') {
+    return state.concat([action.todo])
+  }
+  return state
+}
+
+//Separamos el código en lo que será
+//El código de la libreria que implementemos y
+//El código de nuestra aplicación.
+
+//Ahora tenemos que considerar con esta lógica lo siguiente:
+//En nuestra implementación tenemos que La libreria tiene 
+//acceso a la función todo. Pero cuando implementemos
+//una libreria de terceros no será así, (salvo que como en este caso)
+//todo el còdigo estuviera en un mismo archivo) por lo que debemos 
+//crear algo como lo siguiente
+
+const store = createStore(todos)
+
+//Le agregamos reducer al create store de la libreria, por tanto,
+//en el proximo commit incluiremos los cambios necesarios.
