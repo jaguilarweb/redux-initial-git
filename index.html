@@ -1,9 +1,15 @@
-// Vanilla Javascript
-
-//This code it is not necesary in this file now
-//because it is in the html file
-
-//Library Code
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Todos and Goals</title>
+</head>
+<body>
+  
+  <script type='text/javascript'>
+  //Library Code
 function createStore (reducer) {
   let state
   let listeners = []
@@ -42,7 +48,6 @@ const ADD_GOAL = 'ADD_GOAL'
 const REMOVE_GOAL ='REMOVE_GOAL'
 
 //Action creators
-
 function addTodoAction(todo){
   return {
     type: ADD_TODO,
@@ -104,11 +109,6 @@ function goals (state = [], action) {
   }
 }
 
-//How createStore(todos) only handle a single reducer function
-//we need to create a new reducer, a root reducer that will include 
-//all news reducer functions that we need. (Ex todos as well goals)
-// const store = createStore(todos)
-
 //app reducer will be our root reducer
 function app (state = {}, action){
   return{
@@ -123,7 +123,6 @@ const store = createStore(app)
 store.subscribe(()=>{
   console.log('The new state is: ', store.getState() )
 })
-
 
 store.dispatch(addTodoAction({
     id: 0,
@@ -145,3 +144,6 @@ store.dispatch(addGoalAction({
   id: 0,
   name: 'Learn More',
 }))
+  </script>
+</body>
+</html>
