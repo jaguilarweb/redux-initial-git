@@ -1,7 +1,7 @@
 // Vanilla Javascript
 
 //Library Code
-function createStore () {
+function createStore (reducer) {
   let state
   let listeners = []
 
@@ -19,7 +19,7 @@ function createStore () {
 
   //Modifies the state
   const dispatch = (action) => {
-    state = todos(state, action)
+    state = reducer(state, action)
     listeners.forEach((listener) => listener())
   }
 
@@ -38,19 +38,3 @@ function todos (state = [], action) {
   }
   return state
 }
-
-//Separamos el código en lo que será
-//El código de la libreria que implementemos y
-//El código de nuestra aplicación.
-
-//Ahora tenemos que considerar con esta lógica lo siguiente:
-//En nuestra implementación tenemos que La libreria tiene 
-//acceso a la función todo. Pero cuando implementemos
-//una libreria de terceros no será así, (salvo que como en este caso)
-//todo el còdigo estuviera en un mismo archivo) por lo que debemos 
-//crear algo como lo siguiente
-
-const store = createStore(todos)
-
-//Le agregamos reducer al create store de la libreria, por tanto,
-//en el proximo commit incluiremos los cambios necesarios.
