@@ -185,8 +185,31 @@
         }))
       }
 
+//The first approach to delete a todo item from DB
+//is the following
+      // removeItem = (todo) => {
+      //   return API.deleteTodo(todo.id)
+      //   .then(() => {
+      //     this.props.store.dispatch(removeTodoAction(todo.id))
+      //   })
+      // }
+
+//The second approach as a follow, let us to use a technique
+//called optmistic update. So we delete the item from UI
+//and wait the response.
+//If something is wrong you actually did not delete the item
+//from the db yet. And you can add the item in the UI again.
+
       removeItem = (todo) => {
+        //Optimistic Update (UI)
         this.props.store.dispatch(removeTodoAction(todo.id))
+        //Then request to delete item from the DB
+        return API.deleteTodo(todo.id)
+        .catch(() => {
+          //If something wrong add the item in the UI again.
+          this.props.store.dispatch(addTodoAction(todo))
+          alert('An error ocurred. Try again.')
+        })
       }
 
       toggleItem = (id) => {
@@ -226,6 +249,12 @@
 
       removeItem = (goal) => {
         this.props.store.dispatch(removeGoalAction(goal.id))
+
+        return API.deleteGoal(goal.id)
+          .catch(() => {
+            this.props.store.dispatch(addGoalAction(goal))
+            alert('An error ocurred. Try again.')
+          })
       }
 
       render(){
