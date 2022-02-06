@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,6 +12,9 @@
   <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
   <!--Database simulated-->
   <script src="https://tylermcginnis.com/goals-todos-api/index.js"></script>
+  <!--Thunk Middleware-->
+  <script src="https://unpkg.com/redux-thunk@2.2.0/dist/redux-thunk.min.js"></script>
+
 </head>
 <body>
    <div id='app'></div>
@@ -66,8 +68,6 @@
     }
   }
 
-  //Preparing to dipatch lot of action
-  //We need to handle the database data
   function receiveDataAction (todos, goals){
     return {
       type: RECEIVE_DATA,
@@ -75,6 +75,23 @@
       goals,
     }
   }
+
+  //To support this functionality 
+  //we need a custom middleware (thunk)
+  //The middleware have to diferenciate
+  //if it is dispatched an object or function
+  function handleDeleteTodo(todo){
+    return (dispatch) => {
+      dispatch(removeTodoAction(todo.id))
+
+      return API.deleteTodo(todo.id)
+        .catch(() => {
+          dispatch(addTodoAction(todo))
+          alert('An error ocurred. Try again.')
+      })
+    }
+  }
+
 
   //Functions
   function todos (state = [], action) {
@@ -133,7 +150,7 @@
         return next(action)
   }
 
-  //Another middleware
+  //Logger middleware
   const logger = (store) => (next) => (action) => {
     console.group(action.type)
       console.log('The action:', action)
@@ -143,11 +160,20 @@
     return result
   }
 
+  //Thunk middleware
+  const thunk = (store) => (next) => (action) => {
+    if (typeof action === 'function'){
+      return action (store.dispatch)
+    }
+    return next(action)
+  }
+
+
   const store = Redux.createStore(Redux.combineReducers({
     todos,
     goals,
     loading,
-  }), Redux.applyMiddleware(checker, logger))
+  }), Redux.applyMiddleware(thunk, checker, logger))
 
   </script>
 
@@ -172,6 +198,9 @@
       )
     }
 
+    //Now we need to move the data fetching logic
+    //from our component to the action creator.
+
     class Todos extends React.Component {
       addItem = (e) => {
         e.preventDefault()
@@ -186,31 +215,8 @@
           })
       }
 
-//The first approach to delete a todo item from DB
-//is the following
-      // removeItem = (todo) => {
-      //   return API.deleteTodo(todo.id)
-      //   .then(() => {
-      //     this.props.store.dispatch(removeTodoAction(todo.id))
-      //   })
-      // }
-
-//The second approach as a follow, let us to use a technique
-//called optmistic update. So we delete the item from UI
-//and wait the response.
-//If something is wrong you actually did not delete the item
-//from the db yet. And you can add the item in the UI again.
-
       removeItem = (todo) => {
-        //Optimistic Update (UI)
-        this.props.store.dispatch(removeTodoAction(todo.id))
-        //Then request to delete item from the DB
-        return API.deleteTodo(todo.id)
-        .catch(() => {
-          //If something wrong add the item in the UI again.
-          this.props.store.dispatch(addTodoAction(todo))
-          alert('An error ocurred. Try again.')
-        })
+        this.props.store.dispatch(handleDeleteTodo(todo))
       }
 
       toggleItem = (id) => {
