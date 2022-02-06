@@ -12,7 +12,7 @@
   <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
   <!--Database simulated-->
   <script src="https://tylermcginnis.com/goals-todos-api/index.js"></script>
-  <!--Thunk Middleware-->
+  <!--Redux Thunk Middleware-->
   <script src="https://unpkg.com/redux-thunk@2.2.0/dist/redux-thunk.min.js"></script>
 
 </head>
@@ -161,19 +161,19 @@
   }
 
   //Thunk middleware
-  const thunk = (store) => (next) => (action) => {
+/*   const thunk = (store) => (next) => (action) => {
     if (typeof action === 'function'){
       return action (store.dispatch)
     }
     return next(action)
-  }
+  } */
 
 
   const store = Redux.createStore(Redux.combineReducers({
     todos,
     goals,
     loading,
-  }), Redux.applyMiddleware(thunk, checker, logger))
+  }), Redux.applyMiddleware(ReduxThunk.default, checker, logger))
 
   </script>
 
