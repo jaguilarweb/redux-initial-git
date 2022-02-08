@@ -224,7 +224,7 @@
   </script>
 
   <script type='text/babel'>
-
+//Components
     function List (props){
       return (
         <ul>
@@ -282,21 +282,6 @@
       }
     }
 
-/*     class ConnectedTodos extends React.Component {
-      render() {
-        return (
-          <Context.Consumer>
-            {(store) => {
-              const {todos} = store.getState()
-
-              return <Todos todos={todos} dispatch={store.dispatch} />
-            }}
-          </Context.Consumer>
-        )
-      }
-    } */
-
-    //This function repleace the function above
     const ConnectedTodos = connect((state) => ({
       todos: state.todos
     }))(Todos)
@@ -333,21 +318,6 @@
       }
     }
 
-/*     class ConnectedGoals extends React.Component {
-      render(){
-        return(
-          <Context.Consumer>
-            {(store) => {
-              const {goals} = store.getState()
-
-              return <Goals goals={goals} dispatch={store.dispatch} />
-            }}
-          </Context.Consumer>
-        )
-      }
-    } */
-
-    //This function repleace the function above
     const ConnectedGoals = connect((state) => ({
       goals: state.goals
     }))(Goals)
@@ -357,15 +327,8 @@
         const{ dispatch } = this.props
 
         dispatch(handleInitialData())
-
-        //We do not need subscribe manualy any more
-        //Because we can wrap this implementation inside
-        //of our implementation connect that we build it out
-        /* store.subscribe(() => this.forceUpdate()) */
       }
       render(){
-/*         const {store} = this.props
-        const {loading} = store.getState() */
         if(this.props.loading === true){
           return <h3>Loading</h3>
         }
@@ -379,24 +342,50 @@
       }
     }
 
-/*     class ConnectedApp extends React.Component {
-      render(){
-        return(
-          <Context.Consumer>
-            {(store) => (
-              <App store={store} />
-            )}
-          </Context.Consumer>
-        )
-      }
-    } */
-
-    // It is the same function that above (comment ConnectedApp)
     const ConnectedApp = connect((state) => ({
       loading: state.loading
     }))(App)
 
     const Context = React.createContext()
+
+    function connect (mapStateToProps) {
+      return (Component) => {
+        class Receiver extends React.Component {
+          componentDidMount(){
+            const { subscribe } = this.props.store
+
+            this.unsubscribe = subscribe(() => {
+              this.forceUpdate()
+            })
+          }
+          componentWillUnmount(){
+            this.unsubscribe()
+          }
+
+          render(){
+            const { dispatch, getState } = this.props.store
+            const state = getState()
+            // stateNeeded is an object where each property is a prop of the Component
+            // eg for App it will be { loading: true/false }
+            const stateNeeded = mapStateToProps(state)
+
+            return <Component {...stateNeeded} dispatch={dispatch}/>
+          }
+        }
+
+        class ConnectedComponent extends React.Component{
+          render(){
+            return(
+              <Context.Consumer>
+                {(store) => <Receiver store={store} />}
+              </Context.Consumer>
+            )
+          }
+        }
+        return ConnectedComponent
+      }
+    }
+
 
     class Provider extends React.Component {
       render(){
