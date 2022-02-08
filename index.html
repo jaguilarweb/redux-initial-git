@@ -282,7 +282,7 @@
       }
     }
 
-    class ConnectedTodos extends React.Component {
+/*     class ConnectedTodos extends React.Component {
       render() {
         return (
           <Context.Consumer>
@@ -294,7 +294,12 @@
           </Context.Consumer>
         )
       }
-    }
+    } */
+
+    //This function repleace the function above
+    const ConnectedTodos = connect((store) => ({
+      todos: store.todos
+    }))(Todos)
 
     class Goals extends React.Component {
       addItem = (e) => {
@@ -328,7 +333,7 @@
       }
     }
 
-    class ConnectedGoals extends React.Component {
+/*     class ConnectedGoals extends React.Component {
       render(){
         return(
           <Context.Consumer>
@@ -340,20 +345,28 @@
           </Context.Consumer>
         )
       }
-    }
+    } */
+
+    //This function repleace the function above
+    const ConnectedGoals = connect((store) => ({
+      goals: store.goals
+    }))(Goals)
 
     class App extends React.Component {
       componentDidMount() {
-        const {store} = this.props
+        const{ dispatch } = this.props
 
-        store.dispatch(handleInitialData())
-        store.subscribe(() => this.forceUpdate())
+        dispatch(handleInitialData())
+
+        //We do not need subscribe manualy any more
+        //Because we can wrap this implementation inside
+        //of our implementation connect that we build it out
+        /* store.subscribe(() => this.forceUpdate()) */
       }
       render(){
-        const {store} = this.props
-        const {loading} = store.getState()
-
-        if(loading === true){
+/*         const {store} = this.props
+        const {loading} = store.getState() */
+        if(this.props.loading === true){
           return <h3>Loading</h3>
         }
 
@@ -366,11 +379,7 @@
       }
     }
 
-    //Container or connected component
-    //We need it to connect with store (and in this case
-    //we have to connect with store inside of ComponentDidMount
-    //Not just in the render)
-    class ConnectedApp extends React.Component {
+/*     class ConnectedApp extends React.Component {
       render(){
         return(
           <Context.Consumer>
@@ -380,7 +389,12 @@
           </Context.Consumer>
         )
       }
-    }
+    } */
+
+    // It is the same function that above (comment ConnectedApp)
+    const ConnectedApp = connect((store) => ({
+      loading: store.loading
+    }))(App)
 
     const Context = React.createContext()
 
